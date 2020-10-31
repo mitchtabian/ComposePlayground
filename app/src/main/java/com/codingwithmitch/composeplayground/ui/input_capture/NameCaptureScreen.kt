@@ -21,7 +21,7 @@ private val TAG: String = "AppDebug"
 @Composable
 fun NameCaptureScreen(
     navController: NavHostController,
-    viewModel: InputCaptureViewModel = viewModel()
+    viewModel: InputCaptureViewModel
 ) {
 
     // Requires: import androidx.compose.runtime.getValue

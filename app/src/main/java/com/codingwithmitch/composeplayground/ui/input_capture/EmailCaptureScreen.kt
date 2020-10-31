@@ -18,13 +18,12 @@ private val TAG: String = "AppDebug"
 
 @Composable
 fun EmailCaptureScreen(
-    navHostController: NavHostController,
-    viewModel: InputCaptureViewModel = viewModel()
+    viewModel: InputCaptureViewModel
 ) {
 
     val email: String by viewModel.email.observeAsState("")
 
-    Log.d(TAG, "NameCaptureScreen: VIEWMODEL: ${viewModel}")
+    Log.d(TAG, "EmailCaptureScreen: VIEWMODEL: ${viewModel}")
 
     Column() {
         InputEmail(
