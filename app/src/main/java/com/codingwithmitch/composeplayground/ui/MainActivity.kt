@@ -52,25 +52,38 @@ fun InputCaptureScreen(
     val name: String by viewModel.name.observeAsState("")
 
     MaterialTheme{
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
+        InputName(
+            name = name,
+            onNameChanged = {
+                viewModel.onNameChanged(it)
+            }
+        )
+    }
+}
 
-            TextField(
-                value = name,
-                onValueChange = {viewModel.onNameChanged(it)},
-                label = { Text("Name")},
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                name,
-                style = typography.h3,
-                modifier = Modifier
-                    .padding(top = 20.dp)
-            )
-        }
+@Composable
+fun InputName(
+    name: String,
+    onNameChanged: (String) -> Unit
+){
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
+
+        TextField(
+            value = name,
+            onValueChange = {onNameChanged(it)},
+            label = { Text("Name")},
+            modifier = Modifier.fillMaxWidth()
+        )
+        Text(
+            name,
+            style = typography.h3,
+            modifier = Modifier
+                .padding(top = 20.dp)
+        )
     }
 }
 
