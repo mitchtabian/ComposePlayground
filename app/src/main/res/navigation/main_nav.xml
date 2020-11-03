@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/nameFragment">
+
+    <fragment
+        android:id="@+id/nameFragment"
+        android:name="com.codingwithmitch.composeplayground.ui.name.NameFragment"
+        android:label="NameFragment" >
+        <action
+            android:id="@+id/action_nameFragment_to_emailFragment"
+            app:destination="@id/emailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/emailFragment"
+        android:name="com.codingwithmitch.composeplayground.ui.email.EmailFragment"
+        android:label="EmailFragment" >
+        <action
+            android:id="@+id/action_emailFragment_to_avatarFragment"
+            app:destination="@id/avatarFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/avatarFragment"
+        android:name="com.codingwithmitch.composeplayground.ui.avatar.AvatarFragment"
+        android:label="AvatarFragment" />
+</navigation>

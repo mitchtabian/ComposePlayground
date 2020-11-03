@@ -1,48 +1,37 @@
 package com.codingwithmitch.composeplayground.ui
 
+import android.app.Activity
 import android.os.Bundle
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
-import androidx.compose.ui.platform.setContent
-import androidx.compose.ui.viewinterop.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.codingwithmitch.composeplayground.ui.input_capture.EmailCaptureScreen
-import com.codingwithmitch.composeplayground.ui.input_capture.InputCaptureViewModel
-import com.codingwithmitch.composeplayground.ui.input_capture.NameCaptureScreen
+import com.codingwithmitch.composeplayground.BaseApplication
+import com.codingwithmitch.composeplayground.R
 
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(), UIController{
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as BaseApplication).init()
+        supportFragmentManager.fragmentFactory = (application as BaseApplication).fragmentFactory
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+    }
 
-        setContent {
-            MaterialTheme {
-                val navController = rememberNavController()
-                val viewModel: InputCaptureViewModel = viewModel()
-                NavHost(
-                        navController,
-                        startDestination = "name_capture_screen"
-                ) {
-                    composable("name_capture_screen") { NameCaptureScreen(navController, viewModel)}
-                    composable("email_capture_screen") { EmailCaptureScreen(viewModel) }
-                }
-            }
+
+    override fun hideKeyboard() {
+        val imm: InputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        var view = currentFocus
+        if (view == null) {
+            view = View(this)
         }
-
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
 
 
 
 
-//@Preview
-//@Composable
-//fun Preview() {
-//    InputCaptureScreen()
-//}
 
 
 
