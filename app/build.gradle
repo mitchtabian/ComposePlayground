@@ -74,6 +74,10 @@ dependencies {
     // leak canary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
 
+    // GLIDE
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
     // UI Tests
     androidTestImplementation "androidx.ui:ui-test:$compose_version"
 

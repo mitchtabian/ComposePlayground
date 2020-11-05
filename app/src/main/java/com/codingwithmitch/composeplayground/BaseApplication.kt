@@ -20,9 +20,7 @@ class BaseApplication : Application(){
 
     private fun initVMFactory(){
         if(!::viewModelFactory.isInitialized){
-            viewModelFactory = ProfileViewModelFactory(
-                someFakeDependency = "Just a placeholder for a real dependency."
-            )
+            viewModelFactory = ProfileViewModelFactory()
         }
     }
 

@@ -1,6 +1,9 @@
 package com.codingwithmitch.composeplayground.ui.avatar
 
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.text.style.ClickableSpan
 import android.util.Log
 import androidx.compose.foundation.*
@@ -27,11 +30,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.ui.tooling.preview.Preview
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.codingwithmitch.composeplayground.R
 import com.codingwithmitch.composeplayground.components.BasicSnackbarWithText
 import com.codingwithmitch.composeplayground.components.NextBtn
 import com.codingwithmitch.composeplayground.ui.UIController
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
@@ -42,10 +49,19 @@ private val TAG: String = "AppDebug"
 fun AvatarScreen(
         navController: NavController,
         viewModel: AvatarViewModel,
-        uiController: UIController
+        uiController: UIController,
+        startImagePick: () -> Unit
 ) {
 
-    val avatar: String by viewModel.avatarUrl.observeAsState("")
+    val avatarUriPath: String by viewModel.avatarUriPath.observeAsState("")
+
+
+//    val defaultAsset = imageResource(id = R.drawable.dummy_image)
+//    val avatarAsset: String by viewModel.avatarAsset.observeAsState(
+//            initial = defaultAsset
+//    )
+
+//    val image = stateFor <ImageAsset?> (null) { null }
 
     val snackbarMessage: String by viewModel.snackbarMessage.observeAsState("")
 
@@ -53,10 +69,8 @@ fun AvatarScreen(
 
     Column() {
         CircleAvatar(
-                image = imageResource(id = R.drawable.dummy_image),
-                clickHandler = {
-                    Log.d(TAG, "AvatarScreen: Clicked...")
-                },
+                uri = if(avatarUriPath.isBlank()) null else Uri.parse(avatarUriPath),
+                clickHandler = startImagePick,
                 iconConfig = IconConfig(
                         angle = 45f,
                         iconSize = IconSize.small()
@@ -79,10 +93,12 @@ fun AvatarScreen(
 
 @Composable
 fun CircleAvatar(
-    image: ImageAsset,
-    clickHandler: () -> Unit,
-    iconConfig: IconConfig? = null, // null = no icon
+//        image: ImageAsset?,
+        uri: Uri?,
+        clickHandler: () -> Unit,
+        iconConfig: IconConfig? = null, // null = no icon
 ){
+    Log.d(TAG, "CircleAvatar: REDRAW")
     val imageIcon = vectorResource(id = R.drawable.ic_baseline_image_search_24)
 
     // Get width of image and use that to set the width of the icon
@@ -99,16 +115,40 @@ fun CircleAvatar(
             maxImgHeight = (constraints.maxHeight*0.5)
         }
 
+        val image = stateFor <ImageAsset?> (null) { null }
+//        var image = imageResource(id = R.drawable.dummy_image)
+        if(uri != null){
+            val glide = Glide.with(ContextAmbient.current)
+            CoroutineScope(Main).launch {
+                val target = object : CustomTarget<Bitmap>(){
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        image.value = resource.asImageAsset()
+                        Log.d(TAG, "onResourceReady: SETTING ASSET")
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        Log.d(TAG, "onLoadCleared: called")
+                    }
+                }
+                glide
+                        .asBitmap()
+                        .load(uri)
+                        .into(target)
+            }
+
+        }
+
         Box(
                 modifier = Modifier
                         .padding(16.dp)
                         .fillMaxWidth(),
         ) {
             Image(
-                    image,
+//                    asset = image ?: imageResource(id = R.drawable.dummy_image),
+                    asset = image.value?: imageResource(id = R.drawable.dummy_image),
                     modifier = Modifier
                             .align(Alignment.Center)
-                            .width(with(DensityAmbient.current){maxImgHeight.toInt().toDp() })
+                            .width(with(DensityAmbient.current) { maxImgHeight.toInt().toDp() })
                             .clip(shape = CircleShape)
                             .layout { measurable, constraints ->
                                 val placeable = measurable.measure(constraints)
@@ -201,20 +241,6 @@ class IconSize(
 
 }
 
-
-// TODO("work on taking this as an argument to fn")
-sealed class IconPosition{
-
-    class TopRight: IconPosition()
-
-    class BottomRight: IconPosition()
-
-    class TopLeft: IconPosition()
-
-    class BottomLeft: IconPosition()
-
-
-}
 
 //@Preview
 //@Composable
