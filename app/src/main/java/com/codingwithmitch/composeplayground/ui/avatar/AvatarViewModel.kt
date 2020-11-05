@@ -12,6 +12,7 @@ class AvatarViewModel: ViewModel() {
     private val _snackbarMessage = MutableLiveData("")
     val snackbarMessage: LiveData<String> = _snackbarMessage
 
+
     fun onAvatarChanged(newUrl: String){
         _avatarUrl.value = newUrl
     }
@@ -19,6 +20,7 @@ class AvatarViewModel: ViewModel() {
     fun setSnackbarMessage(message: String?){
         _snackbarMessage.value = message
     }
+
 
 
 }

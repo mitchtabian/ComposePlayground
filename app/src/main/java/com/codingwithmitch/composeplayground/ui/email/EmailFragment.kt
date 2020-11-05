@@ -10,6 +10,7 @@ import androidx.compose.foundation.Text
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.Fragment
@@ -60,7 +61,8 @@ constructor(
                                         viewModel = viewModel,
                                         uiController = uiController
                                 )
-                            }
+                            },
+                            backgroundColor = Color(0xf2f2f2f2),
                     )
 
                 }

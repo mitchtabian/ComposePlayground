@@ -1,22 +1,29 @@
 package com.codingwithmitch.composeplayground.ui.avatar
 
+import android.content.res.Configuration
+import android.text.style.ClickableSpan
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.Text
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.FirstBaseline
 import androidx.compose.material.Icon
-import androidx.compose.runtime.Composable
+import androidx.compose.material.Surface
+import androidx.compose.runtime.*
 import androidx.compose.runtime.dispatch.AndroidUiDispatcher.Companion.Main
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.ui.tooling.preview.Preview
@@ -26,6 +33,8 @@ import com.codingwithmitch.composeplayground.components.NextBtn
 import com.codingwithmitch.composeplayground.ui.UIController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.cos
+import kotlin.math.sin
 
 private val TAG: String = "AppDebug"
 
@@ -43,11 +52,15 @@ fun AvatarScreen(
     Log.d(TAG, "AvatarScreen: VIEWMODEL: ${viewModel}")
 
     Column() {
-        SelectAvatar(
-            avatar = avatar,
-            onAvatarChanged = {
-                viewModel.onAvatarChanged(it)
-            }
+        CircleAvatar(
+                image = imageResource(id = R.drawable.dummy_image),
+                clickHandler = {
+                    Log.d(TAG, "AvatarScreen: Clicked...")
+                },
+                iconConfig = IconConfig(
+                        angle = 45f,
+                        iconSize = IconSize.small()
+                )
         )
         NextBtn {
             // go to final screen?
@@ -65,36 +78,149 @@ fun AvatarScreen(
 
 
 @Composable
-fun SelectAvatar(
-    avatar: String,
-    onAvatarChanged: (String) -> Unit
+fun CircleAvatar(
+    image: ImageAsset,
+    clickHandler: () -> Unit,
+    iconConfig: IconConfig? = null, // null = no icon
 ){
-    val image = imageResource(id = R.drawable.dummy_image)
+    val imageIcon = vectorResource(id = R.drawable.ic_baseline_image_search_24)
 
-    val imageModifier = Modifier
-        .padding(16.dp)
-        .fillMaxWidth()
-        .clip(shape = RoundedCornerShape(4.dp))
-    Image(
-        image,
-        modifier = imageModifier,
-        contentScale = ContentScale.FillWidth
-    )
+    // Get width of image and use that to set the width of the icon
+    var imageWidth by remember { mutableStateOf(0)  }
+    var r by remember { mutableStateOf(0)  }
 
-    TODO("figure out how to center this in the middle of image... ConstraintLayout?")
-//    Column(
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        modifier = Modifier.padding(top = 100.dp)
-//    ) {
-//        Icon(
-//            vectorResource(id = R.drawable.ic_baseline_image_search_24)
-//        )
-//        Text(
-//            "Select an image"
-//        )
-//    }
+    WithConstraints(
+            modifier = Modifier.clickable(onClick = clickHandler)
+    ) {
+        val constraints = this.constraints
+        val configuration = ConfigurationAmbient.current
+        var maxImgHeight = (constraints.maxWidth*0.5)
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            maxImgHeight = (constraints.maxHeight*0.5)
+        }
+
+        Box(
+                modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+        ) {
+            Image(
+                    image,
+                    modifier = Modifier
+                            .align(Alignment.Center)
+                            .width(with(DensityAmbient.current){maxImgHeight.toInt().toDp() })
+                            .clip(shape = CircleShape)
+                            .layout { measurable, constraints ->
+                                val placeable = measurable.measure(constraints)
+                                imageWidth = placeable.width
+                                r = imageWidth / 2
+                                layout(placeable.width, placeable.height) {
+                                    placeable.placeRelative(0, 0)
+                                }
+                            },
+                    contentScale = ContentScale.Fit,
+            )
+            if(iconConfig != null){
+                Surface(
+                        modifier = Modifier
+                                .align(Alignment.Center)
+                                .width(with(DensityAmbient.current){(imageWidth*iconConfig.iconSize.size).toInt().toDp()})
+                                .layout { measurable, constraints ->
+                                    val placeable = measurable.measure(constraints)
+                                    layout(placeable.width, placeable.height) {
+                                        placeable.placeRelative((r * sin(iconConfig.angle)).toInt(), (r * cos(iconConfig.angle)).toInt())
+                                    }
+                                },
+                        elevation = 32.dp,
+                        shape = RoundedCornerShape(8.dp)
+                ) {
+                    Image(
+                            imageIcon,
+                            modifier = Modifier
+                                    .background(
+                                            color = Color.White,
+                                    )
+                            ,
+                            contentScale = ContentScale.FillWidth,
+                    )
+                }
+            }
+
+
+        }
+
+    }
 }
 
+class IconConfig(
+        val angle: Float,
+        val iconSize: IconSize,
+) {
+
+    init {
+        if(angle > 360 || angle < 0){
+            throw Exception("IconAngle: angle must be between 0 - 360.")
+        }
+    }
+
+}
+
+
+class IconSize(
+        val size: Float
+) {
+
+    init {
+        if(size < 0 || size > 1){
+            throw Exception("IconSize: size must be between 0 - 1.")
+        }
+    }
+
+    companion object{
+
+        fun extraSmall(): IconSize {
+            return IconSize(0.05f)
+        }
+
+        fun small(): IconSize {
+            return IconSize(0.15f)
+        }
+
+        fun medium(): IconSize {
+            return IconSize(0.25f)
+        }
+
+        fun Large(): IconSize {
+            return IconSize(0.35f)
+        }
+
+        fun extraLarge(): IconSize {
+            return IconSize(0.45f)
+        }
+    }
+
+}
+
+
+// TODO("work on taking this as an argument to fn")
+sealed class IconPosition{
+
+    class TopRight: IconPosition()
+
+    class BottomRight: IconPosition()
+
+    class TopLeft: IconPosition()
+
+    class BottomLeft: IconPosition()
+
+
+}
+
+//@Preview
+//@Composable
+//fun preview(){
+//    SelectAvatar("", {})
+//}
 
 
 

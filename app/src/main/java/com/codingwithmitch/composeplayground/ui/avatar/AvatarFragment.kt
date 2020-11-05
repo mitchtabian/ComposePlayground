@@ -9,6 +9,7 @@ import androidx.compose.foundation.Text
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.Fragment
@@ -43,25 +44,26 @@ constructor(
                 // In Compose world
                 MaterialTheme {
                     Scaffold(
-                        topBar = {
-                            TopAppBar(
-                                title = {
-                                    Text(
-                                        stringResource(
-                                            id = R.string.app_name
+                            topBar = {
+                                TopAppBar(
+                                    title = {
+                                        Text(
+                                            stringResource(
+                                                id = R.string.app_name
+                                            )
                                         )
-                                    )
-                                },
-                                backgroundColor = MaterialTheme.colors.primary
-                            )
-                        },
-                        bodyContent = {
-                            AvatarScreen(
-                                navController = findNavController(),
-                                viewModel = viewModel,
-                                uiController = uiController
-                            )
-                        }
+                                    },
+                                    backgroundColor = MaterialTheme.colors.primary
+                                )
+                            },
+                            bodyContent = {
+                                AvatarScreen(
+                                    navController = findNavController(),
+                                    viewModel = viewModel,
+                                    uiController = uiController
+                                )
+                            },
+                            backgroundColor = Color(0xf2f2f2f2),
                     )
 
                 }
