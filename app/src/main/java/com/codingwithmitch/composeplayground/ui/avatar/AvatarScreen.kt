@@ -4,7 +4,9 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import androidx.compose.foundation.*
+import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
@@ -19,7 +21,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bumptech.glide.Glide
@@ -80,6 +81,7 @@ fun CircleAvatar(
     if (uri != null){
         // Run only if @param uri has changed since last time.
         onCommit(uri){
+            Log.d(TAG, "CircleAvatar: URI: ${uri}")
             var target: CustomTarget<Bitmap>? = null
             val glide = Glide.with(context)
             val job = CoroutineScope(Main).launch {
@@ -104,10 +106,7 @@ fun CircleAvatar(
         }
     }
 
-    var bm = imageBitmap.value
-    if(bm == null){
-        bm = imageResource(id = R.drawable.dummy_image).asAndroidBitmap()
-    }
+    val bm = imageBitmap.value
     Column(
             modifier = Modifier
                     .fillMaxWidth()
@@ -125,11 +124,12 @@ fun CircleAvatar(
 
 @Composable
 fun CircleImage(
-        bitmap: Bitmap,
+        bitmap: Bitmap?,
         percentage: Float,
         modifier: Modifier,
         clickHandler: () -> Unit
 ){
+
     val configuration = ConfigurationAmbient.current
     var diameter = configuration.screenWidthDp
     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -166,18 +166,17 @@ fun CircleImage(
     }
 
     val imageBitmap = stateFor <Bitmap?> (null) { null }
-    onCommit(bitmap){
-        val bm = createCircularBitmap(bitmap)
-        imageBitmap.value = bm
-        onDispose {
-            bitmap.recycle()
-            imageBitmap.value = null
+    if(bitmap != null){
+        onCommit(bitmap){
+            val bm = createCircularBitmap(bitmap)
+            imageBitmap.value = bm
+            onDispose {
+                imageBitmap.value = null
+            }
         }
     }
-    val circularBitmap = imageBitmap.value
-
     Image(
-            asset = circularBitmap?.asImageAsset() ?: imageResource(id = R.drawable.dummy_image),
+            asset = imageBitmap.value?.asImageAsset()?: imageResource(id = R.drawable.dummy_image),
             modifier = modifier
                     .clip(shape = CircleShape)
                     .width(adjustDiameter(diameter, percentage).dp)
@@ -185,16 +184,10 @@ fun CircleImage(
                     .clickable(onClick = clickHandler),
             contentScale = ContentScale.Fit,
     )
+
 }
 
 
-
-
-
-
-// TODO
-// Crop the image
-//  1. Automatically if aspect ratio isn't 1:1?
 
 
 
