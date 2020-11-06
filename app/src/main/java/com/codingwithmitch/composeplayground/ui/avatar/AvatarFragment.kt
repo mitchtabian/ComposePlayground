@@ -42,9 +42,7 @@ constructor(
         if (result.resultCode == Activity.RESULT_OK) {
             val intent = result.data
             intent?.data?.let { uri ->
-                uri.path?.let {path ->
-                    viewModel.onAvatarChanged(path)
-                }
+                viewModel.setUri(uri)
             }
         }
     }

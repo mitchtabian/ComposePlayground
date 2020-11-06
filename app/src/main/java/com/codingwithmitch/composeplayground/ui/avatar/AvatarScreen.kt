@@ -20,6 +20,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.platform.ContextAmbient
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.ui.tooling.preview.Preview
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.codingwithmitch.composeplayground.R
@@ -53,27 +55,18 @@ fun AvatarScreen(
         startImagePick: () -> Unit
 ) {
 
-    val avatarUriPath: String by viewModel.avatarUriPath.observeAsState("")
-
-
-//    val defaultAsset = imageResource(id = R.drawable.dummy_image)
-//    val avatarAsset: String by viewModel.avatarAsset.observeAsState(
-//            initial = defaultAsset
-//    )
-
-//    val image = stateFor <ImageAsset?> (null) { null }
+    val uriHolder: UriHolder by viewModel.uri.observeAsState(UriHolder(null))
 
     val snackbarMessage: String by viewModel.snackbarMessage.observeAsState("")
 
-    Log.d(TAG, "AvatarScreen: VIEWMODEL: ${viewModel}")
-
     Column() {
         CircleAvatar(
-                uri = if(avatarUriPath.isBlank()) null else Uri.parse(avatarUriPath),
+                uri = if(uriHolder.uri == null) null else uriHolder.uri,
                 clickHandler = startImagePick,
                 iconConfig = IconConfig(
                         angle = 45f,
-                        iconSize = IconSize.small()
+                        iconSize = IconSize.small(),
+                        iconAsset = vectorResource(id = R.drawable.ic_baseline_image_search_24)
                 )
         )
         NextBtn {
@@ -93,13 +86,11 @@ fun AvatarScreen(
 
 @Composable
 fun CircleAvatar(
-//        image: ImageAsset?,
         uri: Uri?,
         clickHandler: () -> Unit,
         iconConfig: IconConfig? = null, // null = no icon
 ){
     Log.d(TAG, "CircleAvatar: REDRAW")
-    val imageIcon = vectorResource(id = R.drawable.ic_baseline_image_search_24)
 
     // Get width of image and use that to set the width of the icon
     var imageWidth by remember { mutableStateOf(0)  }
@@ -116,85 +107,109 @@ fun CircleAvatar(
         }
 
         val image = stateFor <ImageAsset?> (null) { null }
-//        var image = imageResource(id = R.drawable.dummy_image)
-        if(uri != null){
-            val glide = Glide.with(ContextAmbient.current)
-            CoroutineScope(Main).launch {
-                val target = object : CustomTarget<Bitmap>(){
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        image.value = resource.asImageAsset()
-                        Log.d(TAG, "onResourceReady: SETTING ASSET")
+        val context = ContextAmbient.current
+
+        if (uri != null){
+            onCommit(uri){
+                var target: CustomTarget<Bitmap>? = null
+                val glide = Glide.with(context)
+                Log.d(TAG, "CircleAvatar: uri NOT null")
+
+                val job = CoroutineScope(Main).launch {
+                    target = object : CustomTarget<Bitmap>(){
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                            image.value = resource.asImageAsset()
+                            Log.d(TAG, "onResourceReady: SETTING ASSET: ${image.value}")
+                        }
+
+                        override fun onLoadCleared(placeholder: Drawable?) {
+                            Log.d(TAG, "onLoadCleared: called")
+                        }
                     }
 
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        Log.d(TAG, "onLoadCleared: called")
-                    }
+                    glide
+                            .asBitmap()
+                            .load(uri)
+                            .into(target!!)
                 }
-                glide
-                        .asBitmap()
-                        .load(uri)
-                        .into(target)
             }
-
         }
 
-        Box(
+        var theImage = image.value
+        if(theImage == null){
+            theImage = imageResource(id = R.drawable.dummy_image)
+        }
+        MyBox(
+                asset = theImage,
+                maxImgHeight = maxImgHeight.toInt(),
+                iconConfig = iconConfig,
+        )
+    }
+}
+
+
+@Composable
+fun MyBox(
+        asset: ImageAsset,
+        maxImgHeight: Int,
+        iconConfig: IconConfig? = null,
+){
+    var r = 0
+    var imageWidth = 0
+    Box(
+            modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+    ) {
+        Image(
+                asset = asset,
                 modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-        ) {
-            Image(
-//                    asset = image ?: imageResource(id = R.drawable.dummy_image),
-                    asset = image.value?: imageResource(id = R.drawable.dummy_image),
+                        .align(Alignment.Center)
+                        .width(with(DensityAmbient.current) { maxImgHeight.toDp() })
+                        .height(with(DensityAmbient.current) { maxImgHeight.toDp() })
+                        .clip(shape = CircleShape)
+                        .layout { measurable, constraints ->
+                            val placeable = measurable.measure(constraints)
+                            imageWidth = placeable.width
+                            r = imageWidth / 2
+                            layout(placeable.width, placeable.height) {
+                                placeable.placeRelative(0, 0)
+                            }
+                        },
+                contentScale = ContentScale.Fit,
+        )
+        if(iconConfig != null){
+            Surface(
                     modifier = Modifier
                             .align(Alignment.Center)
-                            .width(with(DensityAmbient.current) { maxImgHeight.toInt().toDp() })
-                            .clip(shape = CircleShape)
+                            .width(with(DensityAmbient.current){(imageWidth*iconConfig.iconSize.size).toInt().toDp()})
                             .layout { measurable, constraints ->
                                 val placeable = measurable.measure(constraints)
-                                imageWidth = placeable.width
-                                r = imageWidth / 2
                                 layout(placeable.width, placeable.height) {
-                                    placeable.placeRelative(0, 0)
+                                    placeable.placeRelative((r * sin(iconConfig.angle)).toInt(), (r * cos(iconConfig.angle)).toInt())
                                 }
                             },
-                    contentScale = ContentScale.Fit,
-            )
-            if(iconConfig != null){
-                Surface(
+                    elevation = 32.dp,
+                    shape = RoundedCornerShape(8.dp)
+            ) {
+                Image(
+                        iconConfig.iconAsset,
                         modifier = Modifier
-                                .align(Alignment.Center)
-                                .width(with(DensityAmbient.current){(imageWidth*iconConfig.iconSize.size).toInt().toDp()})
-                                .layout { measurable, constraints ->
-                                    val placeable = measurable.measure(constraints)
-                                    layout(placeable.width, placeable.height) {
-                                        placeable.placeRelative((r * sin(iconConfig.angle)).toInt(), (r * cos(iconConfig.angle)).toInt())
-                                    }
-                                },
-                        elevation = 32.dp,
-                        shape = RoundedCornerShape(8.dp)
-                ) {
-                    Image(
-                            imageIcon,
-                            modifier = Modifier
-                                    .background(
-                                            color = Color.White,
-                                    )
-                            ,
-                            contentScale = ContentScale.FillWidth,
-                    )
-                }
+                                .background(
+                                        color = Color.White,
+                                )
+                        ,
+                        contentScale = ContentScale.FillWidth,
+                )
             }
-
-
         }
-
     }
 }
 
 class IconConfig(
         val angle: Float,
         val iconSize: IconSize,
+        val iconAsset: VectorAsset
 ) {
 
     init {
