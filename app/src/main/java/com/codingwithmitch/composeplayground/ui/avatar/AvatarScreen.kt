@@ -10,9 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
-import androidx.compose.runtime.dispatch.AndroidUiDispatcher.Companion.Main
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -31,9 +29,6 @@ import com.codingwithmitch.composeplayground.R
 import com.codingwithmitch.composeplayground.components.BasicSnackbarWithText
 import com.codingwithmitch.composeplayground.components.NextBtn
 import com.codingwithmitch.composeplayground.ui.UIController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 private val TAG: String = "AppDebug"
 
@@ -47,16 +42,15 @@ fun AvatarScreen(
         startImagePick: () -> Unit
 ) {
 
-    val uri: UriHolder by viewModel.uri.observeAsState(UriHolder())
-    uri.uri?.let { viewModel.setUriHolder(it) }
+    val uriHolder: UriHolder by viewModel.uri.observeAsState(UriHolder())
 
-    Log.d(TAG, "AvatarScreen: ${viewModel.uriHolder.uri}")
+    Log.d(TAG, "AvatarScreen: ${uriHolder.uri}")
 
     val snackbarMessage: String by viewModel.snackbarMessage.observeAsState("")
 
     Column() {
         CircleAvatar(
-                uri = viewModel.uriHolder.uri,
+                uri = uriHolder.uri,
                 clickHandler = startImagePick,
         )
         NextBtn {
@@ -79,56 +73,38 @@ fun CircleAvatar(
         uri: Uri?,
         clickHandler: () -> Unit,
 ){
-    val imageBitmap = stateFor <Bitmap?> (null) { null }
-    val context = ContextAmbient.current
-
-    if (uri != null){
-        // Run only if @param uri has changed since last time.
-        onCommit(uri){
-            Log.d(TAG, "CircleAvatar: URI: ${uri}")
-            var target: CustomTarget<Bitmap>? = null
-            val glide = Glide.with(context)
-            val job = CoroutineScope(Main).launch {
-                target = object : CustomTarget<Bitmap>(){
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        imageBitmap.value = resource
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
-                }
-                glide
-                        .asBitmap()
-                        .load(uri)
-                        .into(target!!)
-            }
-            onDispose {
-                imageBitmap.value = null
-                glide.clear(target)
-                job.cancel()
-            }
-        }
-    }
-
-    val bm = imageBitmap.value
     Column(
             modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-
     ) {
-        CircleImage(
-                bitmap = bm,
-                percentage = .5f,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                clickHandler = clickHandler,
-        )
+        if (uri != null){
+            val loadPictureState = loadPicture(uri)
+
+            if(loadPictureState.data != null){
+                CircleImage(
+                        bitmap = loadPictureState.data,
+                        percentage = .5f,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        clickHandler = clickHandler,
+                )
+            }
+        }
+        else{
+            CircleImage(
+                    bitmap = imageResource(id = R.drawable.dummy_image).asAndroidBitmap(),
+                    percentage = .5f,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    clickHandler = clickHandler,
+            )
+        }
     }
+
 }
 
 @Composable
 fun CircleImage(
-        bitmap: Bitmap?,
+        bitmap: Bitmap,
         percentage: Float,
         modifier: Modifier,
         clickHandler: () -> Unit,
@@ -169,18 +145,9 @@ fun CircleImage(
         return finalBitmap
     }
 
-    val imageBitmap = stateFor <Bitmap?> (null) { null }
-    if(bitmap != null){
-        onCommit(bitmap){
-            val bm = createCircularBitmap(bitmap)
-            imageBitmap.value = bm
-            onDispose {
-                imageBitmap.value = null
-            }
-        }
-    }
+    val bm = createCircularBitmap(bitmap)
     Image(
-            asset = imageBitmap.value?.asImageAsset()?: imageResource(id = R.drawable.dummy_image),
+            asset = bm.asImageAsset(),
             modifier = modifier
                     .clip(shape = CircleShape)
                     .width(adjustDiameter(diameter, percentage).dp)
@@ -188,10 +155,100 @@ fun CircleImage(
                     .clickable(onClick = clickHandler),
             contentScale = ContentScale.Fit,
     )
-
 }
 
+@Composable
+fun loadPicture(uri: Uri): UiState<Bitmap> {
+    var bitmapState: UiState<Bitmap> by state { UiState.Loading() }
 
+    Glide.with(ContextAmbient.current)
+            .asBitmap()
+            .load(uri)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    bitmapState = UiState.Success(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) { }
+            })
+
+    return bitmapState
+}
+
+@Composable
+fun loadPicture(url: String): UiState<Bitmap> {
+    var bitmapState: UiState<Bitmap> by state { UiState.Loading() }
+
+    Glide.with(ContextAmbient.current)
+            .asBitmap()
+            .load(url)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    bitmapState = UiState.Success(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) { }
+            })
+
+    return bitmapState
+}
+
+data class UiState<T>(
+        val loading: Boolean = false,
+        val exception: Exception? = null,
+        val data: T? = null
+) {
+    /**
+     * True if this contains an error
+     */
+    val hasError: Boolean
+        get() = exception != null
+
+    /**
+     * True if this represents a first load
+     */
+    val initialLoad: Boolean
+        get() = data == null && loading && !hasError
+
+    companion object{
+        fun<T> Success(data: T?): UiState<T>{
+            return UiState(
+                    data=data,
+                    loading = false
+            )
+        }
+
+        fun<T> Loading(): UiState<T>{
+            return UiState(loading = true)
+        }
+    }
+}
+
+fun <T> UiState<T>.copyWithResult(value: Result<T>): UiState<T> {
+    return when (value) {
+        is Result.Success -> copy(loading = false, exception = null, data = value.data)
+        is Result.Error -> copy(loading = false, exception = value.exception)
+    }
+}
+
+/**
+ * A generic class that holds a value or an exception
+ */
+sealed class Result<out R> {
+
+    data class Success<out T>(val data: T) : Result<T>()
+    data class Error(val exception: Exception) : Result<Nothing>()
+}
+
+/**
+ * `true` if [Result] is of type [Success] & holds non-null [Success.data].
+ */
+val Result<*>.succeeded
+    get() = this is Result.Success && data != null
+
+fun <T> Result<T>.successOr(fallback: T): T {
+    return (this as? Result.Success<T>)?.data ?: fallback
+}
 
 
 // TODO
