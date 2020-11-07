@@ -2,7 +2,6 @@ package com.codingwithmitch.composeplayground.ui.avatar
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -18,16 +17,13 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
-import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.codingwithmitch.composeplayground.R
 import com.codingwithmitch.composeplayground.components.BasicSnackbarWithText
 import com.codingwithmitch.composeplayground.components.NextBtn
+import com.codingwithmitch.composeplayground.data.loadPicture
 import com.codingwithmitch.composeplayground.ui.UIController
 
 private val TAG: String = "AppDebug"
@@ -157,98 +153,8 @@ fun CircleImage(
     )
 }
 
-@Composable
-fun loadPicture(uri: Uri): UiState<Bitmap> {
-    var bitmapState: UiState<Bitmap> by state { UiState.Loading() }
 
-    Glide.with(ContextAmbient.current)
-            .asBitmap()
-            .load(uri)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    bitmapState = UiState.Success(resource)
-                }
 
-                override fun onLoadCleared(placeholder: Drawable?) { }
-            })
-
-    return bitmapState
-}
-
-@Composable
-fun loadPicture(url: String): UiState<Bitmap> {
-    var bitmapState: UiState<Bitmap> by state { UiState.Loading() }
-
-    Glide.with(ContextAmbient.current)
-            .asBitmap()
-            .load(url)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    bitmapState = UiState.Success(resource)
-                }
-
-                override fun onLoadCleared(placeholder: Drawable?) { }
-            })
-
-    return bitmapState
-}
-
-data class UiState<T>(
-        val loading: Boolean = false,
-        val exception: Exception? = null,
-        val data: T? = null
-) {
-    /**
-     * True if this contains an error
-     */
-    val hasError: Boolean
-        get() = exception != null
-
-    /**
-     * True if this represents a first load
-     */
-    val initialLoad: Boolean
-        get() = data == null && loading && !hasError
-
-    companion object{
-        fun<T> Success(data: T?): UiState<T>{
-            return UiState(
-                    data=data,
-                    loading = false
-            )
-        }
-
-        fun<T> Loading(): UiState<T>{
-            return UiState(loading = true)
-        }
-    }
-}
-
-fun <T> UiState<T>.copyWithResult(value: Result<T>): UiState<T> {
-    return when (value) {
-        is Result.Success -> copy(loading = false, exception = null, data = value.data)
-        is Result.Error -> copy(loading = false, exception = value.exception)
-    }
-}
-
-/**
- * A generic class that holds a value or an exception
- */
-sealed class Result<out R> {
-
-    data class Success<out T>(val data: T) : Result<T>()
-    data class Error(val exception: Exception) : Result<Nothing>()
-}
-
-/**
- * `true` if [Result] is of type [Success] & holds non-null [Success.data].
- */
-val Result<*>.succeeded
-    get() = this is Result.Success && data != null
-
-fun <T> Result<T>.successOr(fallback: T): T {
-    return (this as? Result.Success<T>)?.data ?: fallback
-}
 
 
 // TODO
