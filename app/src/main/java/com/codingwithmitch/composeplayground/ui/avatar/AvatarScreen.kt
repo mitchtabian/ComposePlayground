@@ -155,13 +155,6 @@ fun CircleImage(
 
 
 
-// TODO
-// Figure out why the image gets set back to default on rotation...
-
-
-
-
-
 
 
 
