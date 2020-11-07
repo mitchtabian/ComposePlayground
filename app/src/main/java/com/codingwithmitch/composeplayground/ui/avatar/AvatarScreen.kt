@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
 import androidx.compose.runtime.dispatch.AndroidUiDispatcher.Companion.Main
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -46,13 +47,16 @@ fun AvatarScreen(
         startImagePick: () -> Unit
 ) {
 
-    val uriHolder: UriHolder by viewModel.uri.observeAsState(UriHolder(null))
+    val uri: UriHolder by viewModel.uri.observeAsState(UriHolder())
+    uri.uri?.let { viewModel.setUriHolder(it) }
+
+    Log.d(TAG, "AvatarScreen: ${viewModel.uriHolder.uri}")
 
     val snackbarMessage: String by viewModel.snackbarMessage.observeAsState("")
 
     Column() {
         CircleAvatar(
-                uri = if(uriHolder.uri == null) null else uriHolder.uri,
+                uri = viewModel.uriHolder.uri,
                 clickHandler = startImagePick,
         )
         NextBtn {
@@ -117,7 +121,7 @@ fun CircleAvatar(
                 bitmap = bm,
                 percentage = .5f,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                clickHandler = clickHandler
+                clickHandler = clickHandler,
         )
     }
 }
@@ -127,7 +131,7 @@ fun CircleImage(
         bitmap: Bitmap?,
         percentage: Float,
         modifier: Modifier,
-        clickHandler: () -> Unit
+        clickHandler: () -> Unit,
 ){
 
     val configuration = ConfigurationAmbient.current
@@ -190,7 +194,8 @@ fun CircleImage(
 
 
 
-
+// TODO
+// Figure out why the image gets set back to default on rotation...
 
 
 
