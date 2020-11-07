@@ -40,8 +40,6 @@ fun AvatarScreen(
 
     val uriHolder: UriHolder by viewModel.uri.observeAsState(UriHolder())
 
-    Log.d(TAG, "AvatarScreen: ${uriHolder.uri}")
-
     val snackbarMessage: String by viewModel.snackbarMessage.observeAsState("")
 
     Column() {
