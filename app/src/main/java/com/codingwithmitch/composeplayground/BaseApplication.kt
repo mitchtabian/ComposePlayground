@@ -1,35 +1,11 @@
 package com.codingwithmitch.composeplayground
 
 import android.app.Application
-import androidx.lifecycle.ViewModelProvider
-import com.codingwithmitch.composeplayground.ui.MainActivity
-import com.codingwithmitch.composeplayground.ui.ProfileFragmentFactory
-import com.codingwithmitch.composeplayground.ui.ProfileViewModelFactory
-import com.codingwithmitch.composeplayground.ui.UIController
+import com.codingwithmitch.composeplayground.navigation.Navigation
+
+const val TAG = "AppDebug"
 
 class BaseApplication : Application(){
 
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    lateinit var fragmentFactory: ProfileFragmentFactory
-
-    fun init(){
-        initVMFactory()
-        initFragmentFactory()
-    }
-
-    private fun initVMFactory(){
-        if(!::viewModelFactory.isInitialized){
-            viewModelFactory = ProfileViewModelFactory()
-        }
-    }
-
-    private fun initFragmentFactory(){
-        if(!::fragmentFactory.isInitialized) {
-            if (::viewModelFactory.isInitialized) {
-                fragmentFactory = ProfileFragmentFactory(viewModelFactory)
-            }
-        }
-    }
-
+    val navigation = Navigation()
 }
