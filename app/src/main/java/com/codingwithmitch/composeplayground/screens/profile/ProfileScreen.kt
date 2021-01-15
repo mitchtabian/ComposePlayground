@@ -22,7 +22,7 @@ fun ProfileScreen(){
     val viewModel: ProfileViewModel = remember {
         createViewModel(
             viewModelClass = ProfileViewModel::class,
-            storeProducer = {vmStore},
+            storeProducer = vmStore,
             factory = MyViewModelFactory()
         )
     }

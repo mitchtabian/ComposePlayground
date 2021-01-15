@@ -9,6 +9,8 @@ buildscript {
         classpath "com.android.tools.build:gradle:4.2.0-alpha15"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
+        def hilt = "2.28-alpha"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt"
     }
 }
 

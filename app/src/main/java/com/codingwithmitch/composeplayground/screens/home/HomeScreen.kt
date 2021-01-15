@@ -23,7 +23,7 @@ fun HomeScreen(){
     val viewModel: HomeViewModel = remember {
         createViewModel(
             viewModelClass = HomeViewModel::class,
-            storeProducer = {vmStore},
+            storeProducer = vmStore,
             factory = MyViewModelFactory()
         )
     }

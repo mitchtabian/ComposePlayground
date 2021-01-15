@@ -21,7 +21,7 @@ fun SettingsScreen(){
     val viewModel: SettingsViewModel = remember {
         createViewModel(
             viewModelClass = SettingsViewModel::class,
-            storeProducer = {vmStore},
+            storeProducer = vmStore,
             factory = MyViewModelFactory()
         )
     }

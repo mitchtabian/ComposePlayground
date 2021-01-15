@@ -6,7 +6,7 @@ import com.codingwithmitch.composeplayground.screens.home.HomeViewModel
 import com.codingwithmitch.composeplayground.screens.profile.ProfileViewModel
 import com.codingwithmitch.composeplayground.screens.settings.SettingsViewModel
 
-class MyViewModelFactory: ViewModelProvider.Factory{
+class MyViewModelFactory : ViewModelProvider.Factory{
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when(modelClass){
