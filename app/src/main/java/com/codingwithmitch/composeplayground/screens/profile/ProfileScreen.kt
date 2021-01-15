@@ -12,13 +12,13 @@ import androidx.compose.ui.platform.AmbientViewModelStoreOwner
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.codingwithmitch.composeplayground.screens.MyViewModelFactory
-import com.codingwithmitch.composeplayground.screens.createViewModelLazy
+import com.codingwithmitch.composeplayground.screens.createViewModel
 import com.codingwithmitch.composeplayground.screens.profile.ProfileViewModel
 
 @Composable
 fun ProfileScreen(){
     val vmStore = AmbientViewModelStoreOwner.current.viewModelStore
-    val viewModel: ProfileViewModel by createViewModelLazy(
+    val viewModel: ProfileViewModel = createViewModel(
         viewModelClass = ProfileViewModel::class,
         storeProducer = {vmStore},
         factory = MyViewModelFactory()

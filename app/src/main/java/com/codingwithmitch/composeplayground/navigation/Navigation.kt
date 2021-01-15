@@ -40,7 +40,7 @@ class Navigation {
             destination.value = null
             return true
         }
-        return false
+        return false // exit the app
     }
 
 }

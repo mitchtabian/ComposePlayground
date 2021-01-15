@@ -17,7 +17,7 @@ import com.codingwithmitch.composeplayground.screens.settings.SettingsViewModel
 @Composable
 fun SettingsScreen(){
     val vmStore = AmbientViewModelStoreOwner.current.viewModelStore
-    val viewModel: SettingsViewModel by createViewModelLazy(
+    val viewModel: SettingsViewModel = createViewModel(
         viewModelClass = SettingsViewModel::class,
         storeProducer = {vmStore},
         factory = MyViewModelFactory()

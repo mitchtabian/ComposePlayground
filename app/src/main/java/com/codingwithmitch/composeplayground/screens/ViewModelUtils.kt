@@ -1,11 +1,17 @@
 package com.codingwithmitch.composeplayground.screens
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelLazy
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.*
 import kotlin.reflect.KClass
 
+fun <VM : ViewModel> createViewModel(
+    viewModelClass: KClass<VM>,
+    storeProducer: () -> ViewModelStore,
+    factory: ViewModelProvider.Factory,
+): VM {
+    return ViewModelProvider(storeProducer, factory).get(viewModelClass.java)
+}
+
+// lazy version of createViewModel
 fun <VM : ViewModel> createViewModelLazy(
     viewModelClass: KClass<VM>,
     storeProducer: () -> ViewModelStore,
@@ -13,3 +19,5 @@ fun <VM : ViewModel> createViewModelLazy(
 ): Lazy<VM> {
     return ViewModelLazy(viewModelClass, storeProducer, {factory})
 }
+
+

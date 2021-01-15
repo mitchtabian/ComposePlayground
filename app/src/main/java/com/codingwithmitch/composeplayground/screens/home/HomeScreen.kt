@@ -13,13 +13,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.codingwithmitch.composeplayground.navigation.AmbientNavigation
 import com.codingwithmitch.composeplayground.screens.MyViewModelFactory
-import com.codingwithmitch.composeplayground.screens.createViewModelLazy
+import com.codingwithmitch.composeplayground.screens.createViewModel
 import com.codingwithmitch.composeplayground.screens.home.HomeViewModel
 
 @Composable
 fun HomeScreen(){
     val vmStore = AmbientViewModelStoreOwner.current.viewModelStore
-    val viewModel: HomeViewModel by createViewModelLazy(
+    val viewModel: HomeViewModel = createViewModel(
         viewModelClass = HomeViewModel::class,
         storeProducer = {vmStore},
         factory = MyViewModelFactory()
