@@ -9,6 +9,6 @@ const val TAG = "AppDebug"
 
 class BaseApplication : Application(){
 
-    val navigation = Navigation(Home)
+    val navigation = Navigation()
 
 }

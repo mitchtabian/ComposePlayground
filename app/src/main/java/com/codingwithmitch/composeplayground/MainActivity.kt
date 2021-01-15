@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity(){
                         Destination.Settings -> {
                             SettingsScreen()
                         }
+                        else -> HomeScreen() // app must exit from home destination
                     }
                 }
 

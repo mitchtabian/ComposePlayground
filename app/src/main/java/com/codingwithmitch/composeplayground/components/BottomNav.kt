@@ -17,9 +17,9 @@ fun BottomNav(){
     BottomNavigation() {
         BottomNavigationItem(
             icon = {Icon(Icons.Default.Home)},
-            selected = navigation.destination.value == Home,
+            selected = navigation.destination.value == Home || navigation.destination.value == null,
             onClick = {
-                navigation.navigate(Home, false)
+                navigation.navigate(Home, true)
             }
         )
         BottomNavigationItem(
