@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         setContent {
 
             val destination = navigation.destination.value
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity(){
             super.onBackPressed()
         }
     }
+
 }
 
 

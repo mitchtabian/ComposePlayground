@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.runtime.Composable
 import com.codingwithmitch.composeplayground.navigation.AmbientNavigation
-import com.codingwithmitch.composeplayground.navigation.Destination
 import com.codingwithmitch.composeplayground.navigation.Destination.*
 
 @Composable
