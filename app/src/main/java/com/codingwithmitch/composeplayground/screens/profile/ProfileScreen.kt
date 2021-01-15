@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AmbientViewModelStoreOwner
 import androidx.compose.ui.text.TextStyle
@@ -18,11 +19,13 @@ import com.codingwithmitch.composeplayground.screens.profile.ProfileViewModel
 @Composable
 fun ProfileScreen(){
     val vmStore = AmbientViewModelStoreOwner.current.viewModelStore
-    val viewModel: ProfileViewModel = createViewModel(
-        viewModelClass = ProfileViewModel::class,
-        storeProducer = {vmStore},
-        factory = MyViewModelFactory()
-    )
+    val viewModel: ProfileViewModel = remember {
+        createViewModel(
+            viewModelClass = ProfileViewModel::class,
+            storeProducer = {vmStore},
+            factory = MyViewModelFactory()
+        )
+    }
     Column() {
         Text(
             modifier = Modifier.padding(16.dp),

@@ -7,6 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AmbientViewModelStoreOwner
 import androidx.compose.ui.text.TextStyle
@@ -19,11 +20,13 @@ import com.codingwithmitch.composeplayground.screens.home.HomeViewModel
 @Composable
 fun HomeScreen(){
     val vmStore = AmbientViewModelStoreOwner.current.viewModelStore
-    val viewModel: HomeViewModel = createViewModel(
-        viewModelClass = HomeViewModel::class,
-        storeProducer = {vmStore},
-        factory = MyViewModelFactory()
-    )
+    val viewModel: HomeViewModel = remember {
+        createViewModel(
+            viewModelClass = HomeViewModel::class,
+            storeProducer = {vmStore},
+            factory = MyViewModelFactory()
+        )
+    }
     val navigation = AmbientNavigation.current
     Column() {
         Text(
