@@ -1,4 +1,4 @@
-package com.codingwithmitch.composeplayground.screens.settings
+package com.codingwithmitch.composeplayground.screens.home.home1
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -6,12 +6,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel
+class HomeViewModel1
 @Inject
 constructor(): ViewModel(){
 
-    val randomSetting1 = mutableStateOf(false)
+    val text = mutableStateOf("Home Screen 1")
 
-    val randomSetting2 = mutableStateOf(false)
-
+    val query = mutableStateOf("")
 }

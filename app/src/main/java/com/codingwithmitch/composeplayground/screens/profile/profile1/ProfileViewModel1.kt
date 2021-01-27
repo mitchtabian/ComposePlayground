@@ -1,4 +1,4 @@
-package com.codingwithmitch.composeplayground.screens.settings
+package com.codingwithmitch.composeplayground.screens.profile.profile1
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -6,12 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel
+class ProfileViewModel1
 @Inject
 constructor(): ViewModel(){
 
-    val randomSetting1 = mutableStateOf(false)
-
-    val randomSetting2 = mutableStateOf(false)
-
+    val name = mutableStateOf("")
 }
