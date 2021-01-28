@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.ui.platform.AmbientViewModelStoreOwner
 import androidx.compose.ui.platform.setContent
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.*
@@ -38,74 +39,27 @@ class MainActivity : AppCompatActivity(){
 
 //            val destination = navigation.destination.value
 
-            val topNavController = rememberNavController()
-
-
-            Log.d(TAG, "onCreate: top nav controller: ${topNavController}")
-
-            Scaffold(
-                bottomBar = {
-                    BottomNav(navController = topNavController)
+            val navController = rememberNavController()
+            NavHost(navController = navController, startDestination = "home") {
+                composable(route = "home") {
+                    HomeScreen1(navController, it)
                 }
-            ) {
-//                NavHost(navController = topNavController, startDestination = "home") {
-                NavHost(navController = topNavController, startDestination = "homeRoute") {
-                    navigation(startDestination = "home", route = "homeRoute"){
-                        label = "HomeRoute"
-                        composable(route = "home") {
-                            label = "Home"
-                            HomeScreen1(topNavController)
-                        }
-                        composable(route = "home2") {
-                            label = "Home2"
-                            HomeScreen2(topNavController)
-                        }
-                        composable(route = "home3") {
-                            label = "Home3"
-                            HomeScreen3(topNavController)
-                        }
-                    }
-                    navigation(startDestination = "profile", route = "profileRoute"){
-                        label = "ProfileRoute"
-                        composable("profile") {
-                            label = "Profile"
-                            ProfileScreen1(topNavController)
-                        }
-                        composable("profile2") {
-                            label = "Profile2"
-                            ProfileScreen2()
-                        }
-                    }
-
-                    composable("settings") {
-                        SettingsScreen()
-                    }
+                composable(route = "home2") {
+                    HomeScreen2(navController)
+                }
+                composable(route = "home3") {
+                    HomeScreen3(navController)
+                }
+                composable(route = "profile") {
+                    ProfileScreen1(navController)
+                }
+                composable(route = "profile2") {
+                    ProfileScreen2()
+                }
+                composable(route = "settings") {
+                    SettingsScreen()
                 }
             }
-
-//            Providers(AmbientNavigation provides navigation) {
-//                Scaffold(
-//                    bottomBar = {
-//                        BottomNav(navController = navController)
-//                    }
-//                ) {
-//                    when(destination){
-//
-//                        Destination.Home -> {
-//                            HomeScreen(navController)
-//                        }
-//
-//                        Destination.Profile -> {
-//                            ProfileScreen(navController)
-//                        }
-//
-//                        Destination.Settings -> {
-//                            SettingsScreen(navController)
-//                        }
-//                        else -> HomeScreen(navController) // app must exit from home destination
-//                    }
-//                }
-//            }
         }
     }
 

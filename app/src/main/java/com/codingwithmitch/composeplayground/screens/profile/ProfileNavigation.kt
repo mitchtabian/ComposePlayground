@@ -14,8 +14,6 @@ import com.codingwithmitch.composeplayground.screens.home.HomeScreen3
 
 @Composable
 fun ProfileNavigation(navController: NavHostController){
-//    val navController = rememberNavController()
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
     when(currentRoute){
@@ -26,14 +24,4 @@ fun ProfileNavigation(navController: NavHostController){
             ProfileScreen2()
         }
     }
-
-//    Log.d(TAG, "ProfileNavigation: profile nav controller: ${navController}")
-//    NavHost(navController = navController, startDestination = "profile1", route="profileStart") {
-//        composable("profile1") {
-//            ProfileScreen1(navController = navController)
-//        }
-//        composable("profile2") {
-//            ProfileScreen2()
-//        }
-//    }
 }

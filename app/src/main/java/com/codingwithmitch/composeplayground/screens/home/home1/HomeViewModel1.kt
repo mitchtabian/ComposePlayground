@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-@HiltViewModel
+//@HiltViewModel
 class HomeViewModel1
-@Inject
+//@Inject
 constructor(): ViewModel(){
 
     val text = mutableStateOf("Home Screen 1")
