@@ -6,8 +6,12 @@ import androidx.compose.material.Scaffold
 import androidx.compose.ui.platform.setContent
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import com.codingwithmitch.composeplayground.components.BottomNav
+import com.codingwithmitch.composeplayground.navigation.Screen
+import com.codingwithmitch.composeplayground.navigation.Screen.*
 import com.codingwithmitch.composeplayground.screens.SettingsScreen
 
 
@@ -23,14 +27,14 @@ class MainActivity : AppCompatActivity(){
                     BottomNav(navController)
                 }
             ) {
-                NavHost(navController = navController, startDestination = "home") {
-                    composable(route = "home") {
+                NavHost(navController = navController, startDestination = Home.route) {
+                    composable(route = Home.route) {
                         HomeScreen()
                     }
-                    composable(route = "profile") {
+                    composable(route = Profile.route) {
                         ProfileScreen()
                     }
-                    composable(route = "settings") {
+                    composable(route = Settings.route) {
                         SettingsScreen()
                     }
                 }
