@@ -11,19 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 import com.codingwithmitch.composeplayground.screens.home.home3.HomeViewModel3
 
 @Composable
-fun HomeScreen3(
-    navController: NavController
-){
+fun HomeScreen3(){
     val viewModel: HomeViewModel3 = viewModel(HomeViewModel3::class.java, "HomeViewModel3")
-//    val factory = navController.currentBackStackEntry?.let {
-//        HiltViewModelFactory(AmbientContext.current, it)
-//    }
-//    val viewModel = viewModel<HomeViewModel>(factory = factory)
     Column() {
         Text(
             modifier = Modifier.padding(16.dp),

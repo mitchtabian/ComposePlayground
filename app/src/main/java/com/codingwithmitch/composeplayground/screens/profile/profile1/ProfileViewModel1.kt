@@ -8,7 +8,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel1
 @Inject
-constructor(): ViewModel(){
+constructor(
+
+): ViewModel(){
 
     val name = mutableStateOf("")
 }
