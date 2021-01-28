@@ -1,5 +1,6 @@
 package com.codingwithmitch.composeplayground.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
+import com.codingwithmitch.composeplayground.TAG
 import com.codingwithmitch.composeplayground.components.BottomNav
 import com.codingwithmitch.composeplayground.screens.home.home1.HomeViewModel1
 
@@ -26,6 +28,7 @@ fun HomeScreen1(
 ){
     val factory = HiltViewModelFactory(AmbientContext.current, navBackStackEntry)
     val viewModel: HomeViewModel1 = viewModel(HomeViewModel1::class.java,"HomeViewModel1", factory)
+
     Scaffold(
             bottomBar = {
                 BottomNav(navController = navController)

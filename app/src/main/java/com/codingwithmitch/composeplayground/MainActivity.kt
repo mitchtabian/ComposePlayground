@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(){
                     HomeScreen1(navController, it)
                 }
                 composable(route = "home2") {
-                    HomeScreen2(navController)
+                    HomeScreen2(navController, it)
                 }
                 composable(route = "home3") {
                     HomeScreen3(navController)
