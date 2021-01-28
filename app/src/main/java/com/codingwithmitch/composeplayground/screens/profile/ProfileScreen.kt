@@ -1,5 +1,6 @@
 package com.codingwithmitch.composeplayground
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,20 +13,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AmbientViewModelStoreOwner
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.viewModel
 import com.codingwithmitch.composeplayground.screens.MyViewModelFactory
 import com.codingwithmitch.composeplayground.screens.createViewModel
 import com.codingwithmitch.composeplayground.screens.profile.ProfileViewModel
 
 @Composable
 fun ProfileScreen(){
-    val vmStore = AmbientViewModelStoreOwner.current.viewModelStore
-    val viewModel: ProfileViewModel = remember {
-        createViewModel(
-            viewModelClass = ProfileViewModel::class,
-            storeProducer = vmStore,
-            factory = MyViewModelFactory()
-        )
-    }
+//    val vmStore = AmbientViewModelStoreOwner.current.viewModelStore
+//    val viewModel: ProfileViewModel = remember {
+//        createViewModel(
+//            viewModelClass = ProfileViewModel::class,
+//            storeProducer = vmStore,
+//            factory = MyViewModelFactory()
+//        )
+//    }
+    val viewModel: ProfileViewModel = viewModel(ProfileViewModel::class.java, "ProfileViewModel", )
+    Log.d(TAG, "ProfileScreen: ${viewModel}")
     Column() {
         Text(
             modifier = Modifier.padding(16.dp),
@@ -34,8 +38,8 @@ fun ProfileScreen(){
         )
         TextField(
             modifier = Modifier
-                .fillMaxWidth(.9f)
-                .padding(8.dp)
+                    .fillMaxWidth(.9f)
+                    .padding(8.dp)
             ,
             value = viewModel.name.value,
             onValueChange = {
