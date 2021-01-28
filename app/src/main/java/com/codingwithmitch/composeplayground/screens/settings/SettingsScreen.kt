@@ -8,23 +8,15 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.AmbientViewModelStoreOwner
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.viewModel
 import com.codingwithmitch.composeplayground.screens.settings.SettingsViewModel
 
 @Composable
 fun SettingsScreen(){
-    val vmStore = AmbientViewModelStoreOwner.current.viewModelStore
-    val viewModel: SettingsViewModel = remember {
-        createViewModel(
-            viewModelClass = SettingsViewModel::class,
-            storeProducer = vmStore,
-            factory = MyViewModelFactory()
-        )
-    }
+    val viewModel: SettingsViewModel = viewModel()
     Column() {
         Text(
             modifier = Modifier.padding(16.dp),

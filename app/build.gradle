@@ -81,13 +81,12 @@ dependencies {
     def hilt_navigation = "1.0.0-alpha03"
     implementation "androidx.hilt:hilt-navigation:$hilt_navigation"
 
-    def hilt = "2.28-alpha"
+    def hilt = "2.31.2-alpha"
     implementation "com.google.dagger:hilt-android:$hilt"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt"
+    kapt "com.google.dagger:hilt-compiler:$hilt"
 
-    def hilt_lifecycle_viewmodel = "1.0.0-alpha01"
+    def hilt_lifecycle_viewmodel = "1.0.0-alpha03"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_lifecycle_viewmodel"
-    kapt "androidx.hilt:hilt-compiler:$hilt_lifecycle_viewmodel"
 
     // leak canary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
@@ -101,12 +100,6 @@ dependencies {
 
     // UI Tests
     androidTestImplementation "androidx.ui:ui-test:$compose"
-
-    // ------------ Navigation ------------
-    def nav_version = "2.3.1"
-    // Kotlin
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
 
 }

@@ -8,32 +8,42 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.runtime.Composable
-import com.codingwithmitch.composeplayground.navigation.AmbientNavigation
-import com.codingwithmitch.composeplayground.navigation.Destination.*
+import androidx.navigation.NavController
+import androidx.navigation.compose.navigate
 
 @Composable
-fun BottomNav(){
-    val navigation = AmbientNavigation.current
+fun BottomNav(
+        navController: NavController
+){
     BottomNavigation() {
         BottomNavigationItem(
             icon = {Icon(Icons.Default.Home)},
-            selected = navigation.destination.value == Home || navigation.destination.value == null,
+            selected = false,
             onClick = {
-                navigation.navigate(Home, true)
+                navController.navigate("home"){
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+                }
             }
         )
         BottomNavigationItem(
             icon = {Icon(Icons.Default.VerifiedUser)},
-            selected = navigation.destination.value == Profile,
+            selected = false,
             onClick = {
-                navigation.navigate(Profile, true)
+                navController.navigate("profile"){
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+                }
             }
         )
         BottomNavigationItem(
             icon = {Icon(Icons.Default.Settings)},
-            selected = navigation.destination.value == Settings,
+            selected = false,
             onClick = {
-                navigation.navigate(Settings, true)
+                navController.navigate("settings"){
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+                }
             }
         )
     }
