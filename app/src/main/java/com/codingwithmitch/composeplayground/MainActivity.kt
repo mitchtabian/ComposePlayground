@@ -18,17 +18,11 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(){
 
-//    private val navigation by lazy {
-//        (application as BaseApplication).navigation
-//    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
 
         setContent {
-
-//            val destination = navigation.destination.value
 
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = "home") {
@@ -54,9 +48,6 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
 
 }
 
