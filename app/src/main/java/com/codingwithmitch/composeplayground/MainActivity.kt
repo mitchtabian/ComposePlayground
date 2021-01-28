@@ -5,15 +5,23 @@ import android.util.Log
 import androidx.activity.OnBackPressedDispatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.ui.platform.setContent
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavOptionsBuilder
+import androidx.navigation.compose.*
+import androidx.navigation.navOptions
 import com.codingwithmitch.composeplayground.components.BottomNav
 import com.codingwithmitch.composeplayground.screens.home.HomeNavigation
+import com.codingwithmitch.composeplayground.screens.home.HomeScreen1
+import com.codingwithmitch.composeplayground.screens.home.HomeScreen2
+import com.codingwithmitch.composeplayground.screens.home.HomeScreen3
 import com.codingwithmitch.composeplayground.screens.profile.ProfileNavigation
+import com.codingwithmitch.composeplayground.screens.profile.ProfileScreen1
+import com.codingwithmitch.composeplayground.screens.profile.ProfileScreen2
 import com.codingwithmitch.composeplayground.screens.settings.SettingsScreen
 import dagger.hilt.android.AndroidEntryPoint
+
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(){
@@ -21,12 +29,6 @@ class MainActivity : AppCompatActivity(){
 //    private val navigation by lazy {
 //        (application as BaseApplication).navigation
 //    }
-
-//    interface Callback {
-//        fun call()
-//    }
-//
-//    lateinit var callback: Callback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,15 +40,6 @@ class MainActivity : AppCompatActivity(){
 
             val topNavController = rememberNavController()
 
-//            if(!::callback.isInitialized){
-//                callback = object: Callback{
-//                    override fun call() {
-//                        for(destination in topNavController.graph){
-////                            Log.d(TAG, "call: ${destination}")
-//                        }
-//                    }
-//                }
-//            }
 
             Log.d(TAG, "onCreate: top nav controller: ${topNavController}")
 
@@ -55,40 +48,35 @@ class MainActivity : AppCompatActivity(){
                     BottomNav(navController = topNavController)
                 }
             ) {
-                NavHost(navController = topNavController, startDestination = "home") {
-//                NavHost(navController = topNavController, startDestination = "homeStart") {
-//                    navigation(startDestination = "nestedHome", route = "homeStart") {
-//                        composable("nestedHome"){
-//                            val navController = rememberNavController()
-//                            NavHost(navController = navController, startDestination = "home1") {
-//                                composable("home1") {
-//                                    HomeScreen1(navController = navController)
-//                                }
-//                                composable("home2") {
-//                                    HomeScreen2(navController = navController)
-//                                }
-//                                composable("home3") {
-//                                    HomeScreen3(navController = navController)
-//                                }
-//                            }
-//                        }
-//                        composable("home1") {
-//                            HomeScreen1(navController = rememberNavController())
-//                        }
-//                        composable("home2") {
-//                            HomeScreen2(navController = rememberNavController())
-//                        }
-//                        composable("home3") {
-//                            HomeScreen3(navController = rememberNavController())
-//                        }
-//
-//                    }
-                    composable("home") {
-                        HomeNavigation()
+//                NavHost(navController = topNavController, startDestination = "home") {
+                NavHost(navController = topNavController, startDestination = "homeRoute") {
+                    navigation(startDestination = "home", route = "homeRoute"){
+                        label = "HomeRoute"
+                        composable(route = "home") {
+                            label = "Home"
+                            HomeScreen1(topNavController)
+                        }
+                        composable(route = "home2") {
+                            label = "Home2"
+                            HomeScreen2(topNavController)
+                        }
+                        composable(route = "home3") {
+                            label = "Home3"
+                            HomeScreen3(topNavController)
+                        }
                     }
-                    composable("profile") {
-                        ProfileNavigation()
+                    navigation(startDestination = "profile", route = "profileRoute"){
+                        label = "ProfileRoute"
+                        composable("profile") {
+                            label = "Profile"
+                            ProfileScreen1(topNavController)
+                        }
+                        composable("profile2") {
+                            label = "Profile2"
+                            ProfileScreen2()
+                        }
                     }
+
                     composable("settings") {
                         SettingsScreen()
                     }
@@ -122,9 +110,6 @@ class MainActivity : AppCompatActivity(){
     }
 
     override fun onBackPressed() {
-//        if(::callback.isInitialized){
-//            callback.call()
-//        }
         super.onBackPressed()
     }
 
