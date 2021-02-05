@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         connectionLiveData = ConnectionLiveData(this)
         setContent {
-            val isNetworkAvailable = connectionLiveData.observeAsState(initial = false).value
+            val isNetworkAvailable = connectionLiveData.observeAsState(false).value
             ConnectivityMonitor(isNetworkAvailable = isNetworkAvailable)
         }
     }
@@ -40,24 +40,33 @@ fun ConnectivityMonitor(
         connectionString = "No network connection"
     }
     Box(modifier = Modifier.fillMaxSize()){
-        Column(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)){
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+        ){
             Row(modifier = Modifier.align(Alignment.CenterHorizontally)){
                 Text(
                     connectionString,
-                    modifier = Modifier.padding(8.dp),
-                    style = MaterialTheme.typography.h6
+                    modifier = Modifier
+                        .padding(8.dp),
+                    style = MaterialTheme.typography.h4
                 )
                 if(isNetworkAvailable){
                     Icon(
                         Icons.Default.Check,
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.CenterVertically),
                         contentDescription = "Checkmark icon"
                     )
                 }
                 else{
                     Icon(
                         Icons.Default.Close,
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.CenterVertically),
                         contentDescription = "X icon"
                     )
                 }
