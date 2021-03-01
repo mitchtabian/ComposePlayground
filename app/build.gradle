@@ -22,8 +22,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion "1.4.21-2"
-        kotlinCompilerExtensionVersion "1.0.0-alpha11"
+        kotlinCompilerVersion "1.4.30"
+        kotlinCompilerExtensionVersion "1.0.0-beta01"
     }
 
     buildFeatures {
@@ -57,12 +57,17 @@ dependencies {
     def androidx_ui = "1.0.0-alpha07"
     implementation "androidx.ui:ui-tooling:$androidx_ui"
 
-    def compose = "1.0.0-alpha11"
+    def compose = "1.0.0-beta01"
     implementation "androidx.compose.ui:ui:$compose"
     implementation "androidx.compose.foundation:foundation:$compose"
-    implementation "androidx.compose.material:material:$compose"
     implementation "androidx.compose.runtime:runtime-livedata:$compose"
+    implementation "androidx.compose.runtime:runtime-rxjava2:$compose"
+    implementation "androidx.compose.material:material:$compose"
+    implementation "androidx.compose.material:material-icons-core:$compose"
+    implementation "androidx.compose.material:material-icons-extended:$compose"
 
+    def compose_activity = "1.3.0-alpha03"
+    implementation "androidx.activity:activity-compose:$compose_activity"
 
     // UI Tests
     androidTestImplementation 'androidx.ui:ui-test:1.0.0-alpha05'
