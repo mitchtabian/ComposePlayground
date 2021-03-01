@@ -7,7 +7,9 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,11 +60,11 @@ fun Rocket(
 ) {
   val resource: Painter
   val modifier: Modifier
+  val rocketSize = 200.dp
   if(!isRocketEnabled){
     resource = painterResource(id = R.drawable.rocket_intial)
-    val rocketHeight = with(LocalDensity.current) { (resource.intrinsicSize.height).toDp() }
     modifier = Modifier.offset(
-      y = maxHeight - rocketHeight,
+      y = maxHeight - rocketSize,
     )
   }
   else{
@@ -92,15 +94,13 @@ fun Rocket(
     } else {
       resource = painterResource(id = R.drawable.rocket2)
     }
-    val rocketWidth = with(LocalDensity.current) { (resource.intrinsicSize.width).toDp() }
-    val rocketHeight = with(LocalDensity.current) { (resource.intrinsicSize.height).toDp() }
     modifier = Modifier.offset(
-      x = (maxWidth - rocketWidth) * xPositionState.value,
-      y = (maxHeight - rocketHeight) - (maxHeight - rocketHeight) * xPositionState.value,
+      x = (maxWidth - rocketSize) * xPositionState.value,
+      y = (maxHeight - rocketSize) - (maxHeight - rocketSize) * xPositionState.value,
     )
   }
   Image(
-    modifier = modifier,
+    modifier = modifier.width(rocketSize).height(rocketSize),
     painter = resource,
     contentDescription = "A Rocket",
   )
@@ -131,11 +131,8 @@ fun LaunchButton(
         Text("LAUNCH")
       }
     }
-
   }
 }
-
-
 
 
 
