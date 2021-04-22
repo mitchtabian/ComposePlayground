@@ -34,11 +34,14 @@ android {
         jvmTarget = "1.8"
         useIR = true
     }
+    buildFeatures {
+        compose = true
+    }
     composeOptions {
-        def kotlin_compiler_version = "1.4.21"
-        kotlinCompilerVersion kotlin_compiler_version
+//        def kotlin_compiler_version = "1.4.21"
+//        kotlinCompilerVersion kotlin_compiler_version
 
-        def kotlin_compiler_extension_version = "1.0.0-alpha09"
+        def kotlin_compiler_extension_version = "1.0.0-beta03"
         kotlinCompilerExtensionVersion kotlin_compiler_extension_version
     }
 
@@ -48,7 +51,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
 
-    def app_compat = "1.2.0"
+    def fragment_version = "1.3.3"
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
+
+    def app_compat = "1.3.0-beta01"
     implementation "androidx.appcompat:appcompat:$app_compat"
 
     def material = "1.2.1"
@@ -60,7 +66,7 @@ dependencies {
     def androidx_ui = "1.0.0-alpha07"
     implementation "androidx.ui:ui-tooling:$androidx_ui"
 
-    def compose = "1.0.0-alpha10"
+    def compose = "1.0.0-beta03"
     implementation "androidx.compose.ui:ui:$compose"
     implementation "androidx.compose.foundation:foundation:$compose"
     implementation "androidx.compose.runtime:runtime-livedata:$compose"
